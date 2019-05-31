@@ -1,0 +1,37 @@
+        try {
+            IloCplex model = new IloCplex();
+
+            // create x1 and x2 variables
+            IloNumVar x1 = model.numVar(0, Double.MAX_VALUE);
+            IloNumVar x2 = model.numVar(0, Double.MAX_VALUE);
+
+            // create objective function
+            IloLinearNumExpr z = model.linearNumExpr();
+            z.addTerm(1.0, x1);
+            z.addTerm(1.0, x2);
+
+            // create restrictions
+            IloLinearNumExpr r1 = model.linearNumExpr();
+            IloLinearNumExpr r2 = model.linearNumExpr();
+
+            r1.addTerm(2.0, x1);
+            r1.addTerm(2.0, x2);
+
+            r2.addTerm(5.0, x1);
+            r2.addTerm(3.0, x2);
+
+            // add restriction to the model
+            model.addLe(r1, 8);
+            model.addLe(r2, 15);
+
+            // objective restriction
+            model.addMaximize(z);
+
+            if (model.solve()) {
+                System.out.println("z = " + model.getObjValue());
+                System.out.println("x1 = " + model.getValue(x1));
+                System.out.println("x2 = " + model.getValue(x2));
+            }
+        } catch (IloException e) {
+            System.out.println(e.getMessage());
+        }
